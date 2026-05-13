@@ -1,0 +1,54 @@
+{
+  "name": "Capstone Starter (Codespaces fallback)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+
+  "forwardPorts": [8080, 5000, 5432],
+  "portsAttributes": {
+    "8080": {
+      "label": "Airflow UI",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "MLflow UI",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "Postgres",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "postCreateCommand": "bash -c 'set -e; [ -f .env ] || cp .env.example .env; sudo apt-get update && sudo apt-get install -y --no-install-recommends make postgresql-client; pip install --user uv'",
+
+  "postStartCommand": "bash -c 'set -e; if [ -n \"$CODESPACE_NAME\" ]; then touch .env; for spec in AIRFLOW_BASE_URL:8080 MLFLOW_BASE_URL:5000; do KEY=${spec%:*}; PORT=${spec#*:}; URL=\"https://${CODESPACE_NAME}-${PORT}.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}\"; grep -q \"^$KEY=\" .env && sed -i \"s#^$KEY=.*#$KEY=$URL#\" .env || echo \"$KEY=$URL\" >> .env; echo \"Set $KEY=$URL\"; done; echo \"If the stack is already up, restart it with: make down && make up\"; fi'",
+
+  "postAttachCommand": {
+    "hint": "echo 'Run: make up   (then open the forwarded ports for the Airflow and MLflow UIs)'"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "innoverio.vscode-dbt-power-user",
+        "samuelcolvin.jinjahtml",
+        "ms-azuretools.vscode-docker"
+      ]
+    },
+    "codespaces": {
+      "openFiles": ["README.md"]
+    }
+  },
+
+  "remoteUser": "vscode"
+}

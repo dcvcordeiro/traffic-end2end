@@ -1,0 +1,35 @@
+name: capstone
+version: 1.0.0
+config-version: 2
+
+profile: default
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Each layer materialises into its own schema. The `+schema:` value is
+# appended to whatever target schema is configured in profiles.yml, so the
+# resulting names will be `<target_schema>_silver`, `<target_schema>_gold`,
+# etc. unless `generate_schema_name` is overridden. For training simplicity
+# we override the macro below in `macros/generate_schema_name.sql` so the
+# schema name is the layer name verbatim (`bronze`, `silver`, `gold`).
+models:
+  capstone:
+    staging:
+      +materialized: view
+      +schema: staging
+    silver:
+      +materialized: view
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold
