@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: silver_traffic_monthly
+    description: >
+      Cleaned, aggregated source rows. One row per
+      (plaza_name, direction, vehicle_type, month_start). Inputs to Gold.
+    columns:
+      - name: plaza_name
+        data_tests: [not_null]
+      - name: concessionaria
+        data_tests: [not_null]
+      - name: direction
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Norte', 'Sul', 'Leste', 'Oeste', 'Sentido 1', 'Sentido 2']
+      - name: vehicle_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Comercial', 'Moto', 'Passeio']
+      - name: month_start
+        data_tests: [not_null]
+      - name: volume_total
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [plaza_name, direction, vehicle_type, month_start]

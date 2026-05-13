@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: Date dimension at month grain.
+    columns:
+      - name: date_key
+        data_tests: [not_null, unique]
+      - name: month_start
+        data_tests: [not_null, unique]
+
+  - name: dim_plaza
+    description: Toll plaza dimension. One row per plaza_name.
+    columns:
+      - name: plaza_key
+        data_tests: [not_null, unique]
+      - name: plaza_name
+        data_tests: [not_null, unique]
+
+  - name: dim_vehicle
+    description: Vehicle classification dimension. Three rows.
+    columns:
+      - name: vehicle_key
+        data_tests: [not_null, unique]
+      - name: vehicle_type
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['Comercial', 'Moto', 'Passeio']
+
+  - name: fact_traffic_monthly
+    description: >
+      Monthly traffic volume per (plaza, direction, vehicle_type, month).
+    columns:
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: plaza_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_plaza')
+                field: plaza_key
+      - name: vehicle_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_vehicle')
+                field: vehicle_key
+      - name: direction
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Norte', 'Sul', 'Leste', 'Oeste', 'Sentido 1', 'Sentido 2']
+      - name: volume_total
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"

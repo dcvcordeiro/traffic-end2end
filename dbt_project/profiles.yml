@@ -1,0 +1,16 @@
+# dbt profiles file kept inside the project so trainees do not have to mess
+# with $HOME/.dbt. Both Docker and laptop runs work because every value is
+# read from the environment (set in `.env` / docker-compose).
+default:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'localhost') }}"
+      port: "{{ env_var('POSTGRES_PORT', '5432') | int }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      dbname: "{{ env_var('POSTGRES_DB') }}"
+      schema: staging
+      threads: 4
+      sslmode: disable

@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_toll_traffic
+    description: >
+      Lightly cleaned version of `bronze.toll_traffic_raw`: whitespace trimmed
+      and `volume_total` cast to integer. No deduplication or business logic
+      applied — that belongs in Silver.
+    columns:
+      - name: concessionaria
+        description: Trimmed concessionaire name.
+        data_tests:
+          - not_null
+      - name: mes_ano
+        description: Trimmed `Mon-YY` month-year stamp.
+        data_tests:
+          - not_null
+      - name: praca
+        description: Trimmed plaza identifier.
+        data_tests:
+          - not_null
+      - name: volume_total
+        description: Monthly vehicle volume (integer).
+        data_tests:
+          - not_null
+          # Soft assertion: a handful of source rows have negative counts.
+          # We surface them as warnings rather than fail the build, then
+          # decide in Silver whether to drop, flag, or keep them.
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: ">= 0"
+              config:
+                severity: warn
