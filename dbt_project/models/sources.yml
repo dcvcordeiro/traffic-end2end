@@ -1,0 +1,35 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: >
+      Raw landing zone for source data. Tables here are loaded 1:1 from
+      external systems with no transformation. Encoding has already been
+      normalised to UTF-8 by the Bronze loader.
+    schema: bronze
+    tables:
+      - name: toll_traffic_raw
+        description: >
+          Monthly toll-plaza traffic counts published by ANTT, covering 20
+          concessionaires and 128 plazas between 2010-04 and 2019-09.
+        columns:
+          - name: concessionaria
+            description: Name of the highway concessionaire operating the plaza.
+          - name: mes_ano
+            description: >
+              Month-year stamp in `Mon-YY` format (English month abbreviation,
+              two-digit year). Example: `Jan-10`.
+          - name: sentido
+            description: Direction of travel at the plaza (Norte, Sul, Leste, Oeste, etc.).
+          - name: praca
+            description: Free-text plaza identifier including km marker.
+          - name: categoria
+            description: >
+              Vehicle tariff category. Values are inconsistent across years and
+              concessionaires; cleaning this field is a Silver-layer concern.
+          - name: tipo_de_veiculo
+            description: Vehicle type label (Passeio, Comercial, etc.).
+          - name: volume_total
+            description: Number of vehicle crossings recorded that month. Integer, no nulls.
+          - name: _loaded_at
+            description: Timestamp the row was written by the Bronze loader.

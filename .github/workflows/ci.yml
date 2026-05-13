@@ -1,0 +1,37 @@
+# Minimal CI: validate that dbt models compile without touching a database.
+#
+# `dbt parse` checks Jinja, refs, sources, and YAML schema. It runs in a
+# few seconds and catches the most common breakage in a pull request.
+# Teams can extend this later — spin up an ephemeral Postgres service and
+# run `dbt build` for full integration testing — but this is the floor.
+name: dbt-ci
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install "dbt-postgres==1.8.2"
+
+      - name: dbt deps
+        working-directory: dbt_project
+        run: dbt deps
+
+      - name: dbt parse
+        working-directory: dbt_project
+        run: dbt parse
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: "5432"
+          POSTGRES_DB: warehouse
+          POSTGRES_USER: warehouse
+          POSTGRES_PASSWORD: warehouse
