@@ -93,7 +93,13 @@ def main():
     #
     # When you are done, delete the `raise NotImplementedError` below.
     # ────────────────────────────────────────────────────────────────────
-    raise NotImplementedError("Step 1 — see the TODO in ml/train.py")
+    with mlflow.start_run():
+        model, metrics, input_example = _fit_and_score(params)
+        mlflow.log_params(params)
+        mlflow.log_metrics(metrics)
+        model_info = mlflow.sklearn.log_model(
+                 model, name="model", input_example=input_example,
+             )
 
     if args.register:
         # ────────────────────────────────────────────────────────────────
@@ -112,7 +118,15 @@ def main():
         #   3. Print the result:
         #         print(f"@production currently points to version {mv.version}")
         # ────────────────────────────────────────────────────────────────
-        raise NotImplementedError("Step 2 — see the TODO in ml/train.py")
+        mv = mlflow.register_model(
+            model_info.model_uri, REGISTERED_MODEL_NAME,
+        )
+        MlflowClient().set_registered_model_alias(
+            name=REGISTERED_MODEL_NAME,
+            alias=PRODUCTION_ALIAS,
+            version=mv.version,
+        )
+        print(f"@production currently points to version {mv.version}")
 
 
 if __name__ == "__main__":

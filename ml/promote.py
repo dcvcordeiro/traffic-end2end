@@ -72,16 +72,10 @@ def challenger_wins(challenger_mae: float, champion_mae: float) -> bool:
     """Return True if the challenger should replace the champion.
 
     The metric here is MAE — Mean Absolute Error in vehicles/month.
-
-    TODO (Step 4): replace the body of this function with the correct
-    comparison. In Session 5's airline lab the rule was "higher F1 wins":
-        return challenger_f1 > champion_f1
-    The metric here flips: *lower* MAE wins. Pick the right operator and
-    return the result. Get this wrong and the gate is broken.
     """
-    raise NotImplementedError(
-        "Step 4 — fill in `challenger_wins` in ml/promote.py"
-    )
+    
+    return challenger_mae < champion_mae
+
 
 
 def main():

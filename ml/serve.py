@@ -104,18 +104,10 @@ def main():
 
     x = _build_row(args.plaza, args.direction, args.vehicle, args.month)
 
-    # ────────────────────────────────────────────────────────────────────
-    # TODO (Step 5): load the model by alias from the registry and predict.
-    #
-    #   1. model = mlflow.pyfunc.load_model(MODEL_URI)
-    #   2. forecast = model.predict(x)[0]
-    #   3. print(f"Forecast: {int(forecast)} vehicles")
-    #
-    # Notice that the code never names a version number — the registry
-    # decides which version `@production` resolves to. That is the whole
-    # point of load-by-alias serving.
-    # ────────────────────────────────────────────────────────────────────
-    raise NotImplementedError("Step 5 — see the TODO in ml/serve.py")
+    model = mlflow.pyfunc.load_model(MODEL_URI)
+    forecast = model.predict(x)[0]
+    print(f"Forecast: {int(forecast)} vehicles")
+
 
 
 if __name__ == "__main__":

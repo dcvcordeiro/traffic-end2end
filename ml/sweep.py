@@ -47,21 +47,19 @@ def main():
 
     for i, params in enumerate(SWEEP_CONFIGS, start=1):
         run_name = f"config-{i}"
+        with mlflow.start_run(run_name=run_name):
+            model = RandomForestRegressor(**params);
+            model.fit(x_train, y_train)
+            preds = model.predict(x_test)
+            mae   = float(mean_absolute_error(y_test, preds))
+            rmse  = float(root_mean_squared_error(y_test, preds))
+            mean_volume = float(y_test.mean())
+            mlflow.log_params(params)
+            mlflow.log_metrics({"mae": mae, "rmse": rmse, "mean_volume": mean_volume})
+            mlflow.sklearn.log_model(
+                model, name="model", input_example=input_example
+            )
 
-        # ────────────────────────────────────────────────────────────────
-        # TODO (Step 3): inside an MLflow run named `run_name`, fit a
-        # RandomForestRegressor with these `params`, compute MAE and RMSE
-        # on the test set, and log:
-        #
-        #     mlflow.log_params(params)
-        #     mlflow.log_metrics({"mae": ..., "rmse": ..., "mean_volume": ...})
-        #     mlflow.sklearn.log_model(
-        #         model, name="model", input_example=input_example,
-        #     )
-        #
-        # Open the run with `with mlflow.start_run(run_name=run_name):`.
-        # ────────────────────────────────────────────────────────────────
-        raise NotImplementedError("Step 3 — see the TODO in ml/sweep.py")
 
     print(f"Logged {len(SWEEP_CONFIGS)} runs. Open the UI to compare.")
 
