@@ -1,0 +1,23 @@
+version: 2
+
+# TODO (Block 3): define tests on the Silver model.
+#
+# Reference: models/staging/_staging.yml for the YAML structure (same
+# shape, different model name and tests).
+#
+# Required tests per docs (block-3-modeling.md → "Tests on the Silver model"):
+#   - not_null on plaza_name, direction, vehicle_type, month_start
+#   - accepted_values on vehicle_type: ['Comercial', 'Moto', 'Passeio']
+#   - accepted_values on direction: ['Norte', 'Sul', 'Leste', 'Oeste',
+#                                    'Sentido 1', 'Sentido 2']
+#   - dbt_utils.unique_combination_of_columns on the chosen grain:
+#       (plaza_name, direction, vehicle_type, month_start)
+#
+# `dbt_utils` is already declared in packages.yml — no extra setup needed.
+
+models:
+  - name: silver_traffic_monthly
+    description: >
+      TODO (Block 3): replace this description with what the model
+      represents at the chosen grain.
+    # TODO: add `columns:` with tests per the list above.

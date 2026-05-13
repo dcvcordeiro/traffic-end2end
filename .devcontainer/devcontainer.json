@@ -1,0 +1,50 @@
+{
+  "name": "Capstone Starter (Codespaces fallback)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+
+  "forwardPorts": [8080, 5432],
+  "portsAttributes": {
+    "8080": {
+      "label": "Airflow UI",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "Postgres",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "postCreateCommand": "bash -c 'set -e; [ -f .env ] || cp .env.example .env; sudo apt-get update && sudo apt-get install -y --no-install-recommends make postgresql-client; pip install --user uv'",
+
+  "postStartCommand": "bash -c 'set -e; if [ -n \"$CODESPACE_NAME\" ]; then URL=\"https://${CODESPACE_NAME}-8080.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}\"; touch .env; grep -q \"^AIRFLOW_BASE_URL=\" .env && sed -i \"s#^AIRFLOW_BASE_URL=.*#AIRFLOW_BASE_URL=$URL#\" .env || echo \"AIRFLOW_BASE_URL=$URL\" >> .env; echo \"Set AIRFLOW_BASE_URL=$URL — restart the stack with: make down && make up\"; fi'",
+
+  "postAttachCommand": {
+    "hint": "echo 'Run: make up   (then open the forwarded port for the Airflow UI)'"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "innoverio.vscode-dbt-power-user",
+        "samuelcolvin.jinjahtml",
+        "ms-azuretools.vscode-docker"
+      ]
+    },
+    "codespaces": {
+      "openFiles": ["README.md"]
+    }
+  },
+
+  "remoteUser": "vscode"
+}

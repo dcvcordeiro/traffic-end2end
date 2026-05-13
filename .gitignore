@@ -1,0 +1,27 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# dbt
+dbt_project/target/
+dbt_project/dbt_packages/
+dbt_project/logs/
+dbt_project/.user.yml
+
+# Airflow
+airflow/logs/
+airflow/plugins/__pycache__/
+
+# Docker volumes (local bind mounts, if any)
+.postgres-data/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

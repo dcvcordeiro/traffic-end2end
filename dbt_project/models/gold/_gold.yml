@@ -1,0 +1,36 @@
+version: 2
+
+# TODO (Block 3): define tests on the Gold models.
+#
+# Reference: models/staging/_staging.yml for the YAML structure.
+#
+# Required tests per docs (block-3-modeling.md → "Tests on Gold"):
+#
+# For each dimension:
+#   - unique and not_null on the surrogate key
+#       (date_key on dim_date, plaza_key on dim_plaza, vehicle_key on dim_vehicle)
+#   - unique on the natural key
+#       (month_start on dim_date, plaza_name on dim_plaza, vehicle_type on dim_vehicle)
+#
+# For fact_traffic_monthly:
+#   - not_null on every foreign key (date_key, plaza_key, vehicle_key)
+#   - relationships test pointing each FK back to its dimension's surrogate key
+#   - row-count sanity check (non-zero)
+#   - (Optional) sum-volume reconciliation against silver_traffic_monthly
+
+models:
+  - name: dim_date
+    description: One row per month between the earliest and latest month in Silver.
+    # TODO: add `columns:` with tests per the list above.
+
+  - name: dim_plaza
+    description: One row per unique plaza.
+    # TODO: add `columns:` with tests per the list above.
+
+  - name: dim_vehicle
+    description: One row per vehicle type. Three rows total.
+    # TODO: add `columns:` with tests per the list above.
+
+  - name: fact_traffic_monthly
+    description: One row per (plaza, direction, vehicle, month). The grain table.
+    # TODO: add `columns:` with tests per the list above.
